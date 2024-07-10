@@ -40,14 +40,14 @@ Route::middleware([
 
 Route::get('test', [HomeController::class, 'test']) ->name('test');
 
-Route::prefix('tracks')->controller(TrackController::class)->group(function() {
+Route::prefix('tracks')->name('tracks.')->controller(TrackController::class)->group(function() {
     route::get('/', 'index')->name('index');
     route::get('/create', 'create')->name('create');
-    //route::get('/', 'store')->name('store');
+    route::post('/store', 'store')->name('store');
     //route::get('/{track}', 'show')->name('show');
-    //route::get('/{track}/edit', 'edit')->name('edit');
-    //route::get('/{track}', 'update')->name('update');
-    //route::get('/{track}', 'destroy')->name('destroy');
+    route::get('/{track}/edit', 'edit')->name('edit');
+    route::put('/{track}', 'update')->name('update');
+    route::delete('/{track}', 'destroy')->name('destroy');
 });
 
 

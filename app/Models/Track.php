@@ -19,5 +19,8 @@ class Track extends Model
         'play_count',
     ];
 
-    
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
 }

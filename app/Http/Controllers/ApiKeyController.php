@@ -2,40 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ApiKey;
+use App\Models\Apikey;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class ApiKeyController extends Controller
 {
     public function index()
     {
-        $apiKeys = Auth::user()->apiKeys;
-        return view('api_keys.index', compact('apiKeys'));
+        $user = auth()->user();
+        $apikeys = $user->apikeys()->get();
+
+        return Inertia::render('Keys/index', [
+            'apikeys' => $apikeys,
+        ]);
     }
 
     public function create()
     {
-        return view('api_keys.create');
+        return Inertia::render('Keys/Create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:20',
         ]);
 
-        Auth::user()->apiKeys()->create($request->only('name'));
+        $user = auth()->user();
 
-        return redirect()->route('api_keys.index')->with('success', 'API Key created successfully.');
+        $user->apiKeys()->create([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('Keys.index');
     }
 
-    public function destroy(ApiKey $apiKey)
+    public function destroy(Apikey $apiKey)
     {
-        $this->authorize('delete', $apiKey);
-
         $apiKey->delete();
 
-        return redirect()->route('api_keys.index')->with('success', 'API Key deleted successfully.');
+        return redirect()->route('Keys.index');
     }
+
+
 }

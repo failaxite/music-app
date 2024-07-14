@@ -7,6 +7,7 @@ use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\TrackController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\ApiKeyController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -27,6 +28,9 @@ Route::middleware([
     })->name('dashboard');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::resource('api_keys', ApiKeyController::class)->only(['index', 'create', 'store', 'destroy']);
+});
 
 Route::get('/', [TrackController::class, 'index'])->name('tracks.index');
 Route::get('/test', [HomeController::class, 'test'])->name('test');

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApikeysController;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PlaylistController;
@@ -41,4 +42,5 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::put('/{track}', 'update')->name('update');
         Route::delete('/{track}', 'destroy')->name('destroy');
     });
+
 });

@@ -5,6 +5,13 @@ import { createApp, h } from 'vue';
 import { createInertiaApp, Link } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import moment from 'moment';
+
+const momentPlugin = {
+    install(app) {
+        app.config.globalProperties.$moment = moment;
+    }
+}
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -15,6 +22,7 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(momentPlugin)
             .component('Link', Link)
             .mount(el);
     },

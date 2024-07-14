@@ -28,15 +28,12 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::resource('api_keys', ApiKeyController::class)->only(['index', 'create', 'store', 'destroy']);
-});
-
 Route::get('/', [TrackController::class, 'index'])->name('tracks.index');
 Route::get('/test', [HomeController::class, 'test'])->name('test');
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::resource('playlists', PlaylistController::class);
+    Route::resource('Keys', ApiKeyController::class)->parameters(['Keys' => 'Key']);
 
     Route::controller(TrackController::class)->prefix('tracks')->name('tracks.')->group(function () {
         Route::get('/create', 'create')->name('create');
@@ -46,5 +43,4 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::put('/{track}', 'update')->name('update');
         Route::delete('/{track}', 'destroy')->name('destroy');
     });
-
 });

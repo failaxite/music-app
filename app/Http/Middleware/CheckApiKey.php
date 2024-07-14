@@ -3,27 +3,38 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Models\Apikeys;
+use App\Models\Apikey;
 use Illuminate\Http\Request;
 
 class CheckApiKey
 {
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
     public function handle(Request $request, Closure $next)
     {
-        $apiKey = $request->header('x-api-key');
+        // Lire la valeur de l'en-tête 'x-api-key'
+        $apiKeyValue = $request->header('x-api-key');
 
+        // Vérifiez si la clé API est présente
+        if (!$apiKeyValue) {
+            return response()->json(['message' => 'API key is missing'], 401);
+        }
+
+        // Rechercher la clé API dans la base de données
+        $apiKey = ApiKey::where('key', $apiKeyValue)->first();
+
+        // Vérifiez si la clé API est valide
         if (!$apiKey) {
-            return response()->json(['error' => 'API key missing'], 401);
+            return response()->json(['message' => 'Invalid API key'], 401);
         }
 
-        $apikeys = Apikeys::where('key', $apiKey)->first();
-
-        if (!$apikeys) {
-            return response()->json(['error' => 'Invalid API key'], 403);
-        }
-
-        // Attach the user to the request
-        $request->merge(['user' => $apikeys->user]);
+        // Authentifier l'utilisateur correspondant à l'API key
+        auth()->login($apiKey->user);
 
         return $next($request);
     }
